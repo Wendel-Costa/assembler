@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Localiza a raiz do repositorio.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Valida os argumentos da linha de comando.
+if [ "$#" -ne 1 ]; then
+    echo "Uso: ./assembler <arquivo.asm>" >&2
+    exit 1
+fi
+
+# Verifica se o Java esta disponivel.
+if ! command -v java >/dev/null 2>&1; then
+    echo "Erro: Java nao encontrado. Instale o JDK 17 ou superior." >&2
+    exit 1
+fi
+
+# Compila o codigo-fonte.
+"$ROOT/scripts/build.sh"
+
+# Executa o montador, repassando os argumentos.
+exec java -cp "$ROOT/build/classes" main.Main "$@"
